@@ -2,32 +2,51 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>بحث المدن - nada305</title>
+  <title>بحث المدن والدول - nada305</title>
   <link rel="stylesheet" href="style.css">
-  <script>
-    async function searchCity() {
-      const query = document.getElementById('searchInput').value;
-      const url = `https://api.unsplash.com/search/photos?query=${query}&client_id=QDCEeJjI_W6L8MDzqAMvGJ2Im5nrm21jNNFUiRphc_Ow&per_page=9`;
-      
-      const res = await fetch(url);
-      const data = await res.json();
-      
-      const gallery = document.getElementById('gallery');
-      gallery.innerHTML = '';
-
-      data.results.forEach(photo => {
-        const img = document.createElement('img');
-        img.src = photo.urls.small;
-        gallery.appendChild(img);
-      });
-    }
-  </script>
+  <style>
+    .gallery img { width: 200px; margin: 10px; border-radius: 10px; box-shadow: 0 0 10px #ccc; }
+  </style>
 </head>
 <body>
-  <h1>🔍 البحث عن مدينة أو دولة</h1>
-  <input type="text" id="searchInput" placeholder="اكتب اسم مدينة أو دولة">
+  <h1>🔍 ابحث عن مدينة أو دولة</h1>
+  <input type="text" id="searchInput" placeholder="اكتب مكة، الرياض، نيويورك...">
   <button onclick="searchCity()">بحث</button>
-  <div id="gallery" class="gallery"></div>
-  <a href="index.html">العودة للرئيسية</a>
+
+  <div id="gallery"></div>
+
+  <a href="index.html">الرجوع للرئيسية</a>
+
+  <script>
+    async function searchCity() {
+      const query = document.getElementById('searchInput').value.trim();
+      if (query === '') {
+        alert("الرجاء كتابة اسم مدينة أو دولة");
+        return;
+      }
+
+      const url = `https://api.unsplash.com/search/photos?query=${query}&client_id=QDCEeJjI_W6L8MDzqAMvGJ2Im5nrm21jNNFUiRphc_Ow&per_page=9`;
+
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        const gallery = document.getElementById('gallery');
+        gallery.innerHTML = '';
+
+        if (data.results.length === 0) {
+          gallery.innerHTML = '<p>ما لقينا صور لهذي المدينة 😢</p>';
+        } else {
+          data.results.forEach(photo => {
+            const img = document.createElement('img');
+            img.src = photo.urls.small;
+            gallery.appendChild(img);
+          });
+        }
+      } catch (err) {
+        alert("صار خطأ، جرب مرة ثانية");
+      }
+    }
+  </script>
 </body>
 </html>
